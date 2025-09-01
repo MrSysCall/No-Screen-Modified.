@@ -1,34 +1,40 @@
-# No Screen - Kernel Mode Window Affinity Tool
+# No Screen - Kernel Mode Window Affinity Controller
 
-This project is designed for P2C owners and developers.  
+**No Screen** is a high-privilege kernel-mode tool designed for developers requiring secure window protection against screen capture. By leveraging a direct kernel-level modification of window display affinity, it ensures that target windows remain inaccessible to most user-mode screen capture and anti-cheat mechanisms.  
 
-**No Screen** is a simple IOCTL-based tool that uses **Set Window Affinity from kernel mode** to give your window more or equivalent permissions compared to anti-cheats. In most cases, anti-cheats cannot capture your screen at all because of the permissions of the driver setting your Window Affinity.  
-
-Tested on **Valorant** and **Call of Duty**.  
+This tool has been tested on **Valorant** and **Call of Duty** and demonstrates reliable protection against typical user-mode screenshot attempts.  
 
 ---
 
-## How It Works
+## Technical Overview
 
-By modifying the `dwDisplayAffinity` of a window in kernel mode, this tool prevents user-mode screen capture and screenshot attempts. Essentially, it operates at a higher privilege level than most anti-cheats.
+The driver operates by locating the target window's kernel-mode `tagWND` structure and modifying the `dwDisplayAffinity` field. This enforces the requested display affinity (`WDA_MONITOR`, `WDA_EXCLUDEFROMCAPTURE`, etc.) directly within the Window Manager.  
+
+Key advantages of this approach:  
+
+- **Kernel-Level Enforcement**: Operates at Ring-0, providing a privilege level higher than standard user-mode screen capture routines.  
+- **Stealth**: Modifications are invisible to user-mode API monitoring, hooks, and anti-cheat inspection.  
+- **No Process Interference**: Changes are applied externally; the target process remains unaware, and no memory injection is required.  
 
 ---
 
-## How to Use
+## Usage Example
 
 ```cpp
 #include <iostream>
 #include "km_window_affinity.h"
 
 int main() {
+    // Retrieve handle to the target window
     HWND hwnd = FindWindowA(NULL, "Target Window");
 
+    // Apply kernel-level display affinity protection
     NTSTATUS status = protect_sprite_content_ex(hwnd, WDA_EXCLUDEFROMCAPTURE);
 
     if (status == 0)
-        std::cout << "Success: Window hidden from screenshots\n";
+        std::cout << "Window successfully hidden from screenshots.\n";
     else
-        std::cerr << "Error: Unable to hide window\n";
+        std::cerr << "Failed to apply window protection.\n";
 
     return 0;
 }

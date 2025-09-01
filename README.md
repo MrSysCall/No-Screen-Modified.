@@ -1,4 +1,4 @@
-
+Got it. You have an extra opening backtick and the code block wasn’t closed properly. Here’s the fixed version with proper Markdown syntax:
 
 ````markdown
 # Kernel Mode Window Affinity Controller
@@ -41,3 +41,18 @@ The driver locates the target window's `tagWND` structure in kernel memory and m
 ```cpp
 #include <iostream>
 #include "km_window_affinity.h"
+
+int main() {
+    HWND hwnd = FindWindowA(NULL, "Target Window");
+
+    NTSTATUS status = protect_sprite_content_ex(hwnd, WDA_EXCLUDEFROMCAPTURE);
+
+    if (status == 0)
+        std::cout << "Success: Window hidden from screenshots\n";
+    else
+        std::cerr << "Error: Unable to hide window\n";
+
+    return 0;
+}
+````
+

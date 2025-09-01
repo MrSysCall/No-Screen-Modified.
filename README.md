@@ -1,49 +1,43 @@
-# 🛡️ Kernel Mode Window Affinity Controller
 
-## 🔥 Features
 
-- **Kernel-Level Authority** – Operates at Ring-0, accessing `win32kbase.sys` & internal `tagWND` objects.
-- **Ultimate Stealth** – Completely invisible to user-mode API hooks & `GetWindowDisplayAffinity`.
-- **Zero Process Impact** – Target windows are unaware; no injection, no memory modification.
-- **Bypass Hooks** – Immune to Detours-style monitoring or API interceptions.
+````markdown
+# Kernel Mode Window Affinity Controller
+
+A high-privilege Windows kernel driver for hiding windows from screenshots and screen capture. Operates entirely in kernel mode, bypassing user-mode API restrictions and hooks.
+
+[License: MIT](LICENSE) | [Issues](https://github.com/YourUsername/KernelWindowAffinity/issues) | [Discussions](https://github.com/YourUsername/KernelWindowAffinity/discussions)
 
 ---
 
-## 🚀 Why Kernel Mode?
+## Features
+
+- **Kernel-Level Access**: Operates at Ring-0 with direct access to `win32kbase.sys` and `tagWND` structures.  
+- **Stealth**: Modifications are invisible to user-mode API calls and hooks.  
+- **No Impact on Target Process**: Applies changes externally, without injecting code or modifying memory.  
+- **Hook Resistant**: Immune to user-mode hooking engines such as Detours.
+
+---
+
+## Why Kernel Mode
 
 | Aspect | User-Mode API | Kernel Driver |
 |--------|---------------|---------------|
 | Privilege | Ring-3 | Ring-0 |
-| Detection | ❌ Easily intercepted | ✅ Undetectable in user-mode |
-| Access | Public API | Internal tagWND structures |
-| Hook Bypass | ❌ | ✅ |
-| Overhead | API Call | Direct memory write |
+| Detection | Easily intercepted | Undetectable in user-mode |
+| Access | Public API | Internal `tagWND` structures |
+| Bypasses Hooks | No | Yes |
+| Overhead | API call | Direct memory write |
 
 ---
 
-## 🛠 Technical Overview
+## How It Works
 
-The driver:
-
-1. Finds the target window's `tagWND` structure in kernel memory.
-2. Modifies `dwDisplayAffinity` to the desired value (`WDA_MONITOR`, `WDA_EXCLUDEFROMCAPTURE`, etc.).
-3. Applies the change directly via the Window Manager—**no trace in user-mode**.
-
-**Challenge solved:** reliable cross-version detection of `tagWND`.
+The driver locates the target window's `tagWND` structure in kernel memory and modifies the `dwDisplayAffinity` field to the requested value (`WDA_MONITOR`, `WDA_EXCLUDEFROMCAPTURE`). The change is applied directly via the Window Manager, with no observable side effects in user-mode.
 
 ---
 
-## 💻 Example
+## Example Usage
 
 ```cpp
 #include <iostream>
 #include "km_window_affinity.h"
-
-HWND hwnd = FindWindowA(NULL, "Target Window");
-
-NTSTATUS status = set_attributes(hwnd, WDA_EXCLUDEFROMCAPTURE);
-
-if (status == 0)
-    std::cout << "✅ Success: Window hidden from screenshots\n";
-else
-    std::cerr << "❌ Error: Unable to hide window\n";

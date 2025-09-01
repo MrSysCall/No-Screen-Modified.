@@ -1,40 +1,20 @@
-# Kernel Mode Window Affinity Controller
+# No Screen - Kernel Mode Window Affinity Tool
 
-# Planning On Releasing This Week.
+This project is designed for P2C owners and developers.  
 
-A high-privilege Windows kernel driver for hiding windows from screenshots and screen capture. Operates entirely in kernel mode, bypassing user-mode API restrictions and hooks.
+**No Screen** is a simple IOCTL-based tool that uses **Set Window Affinity from kernel mode** to give your window more or equivalent permissions compared to anti-cheats. In most cases, anti-cheats cannot capture your screen at all because of the permissions of the driver setting your Window Affinity.  
 
-
----
-
-## Features
-
-- **Kernel-Level Access**: Operates at Ring-0 with direct access to `win32kbase.sys` and `tagWND` structures.  
-- **Stealth**: Modifications are invisible to user-mode API calls and hooks.  
-- **No Impact on Target Process**: Applies changes externally, without injecting code or modifying memory.  
-- **Hook Resistant**: Immune to user-mode hooking engines such as Detours.
-
----
-
-## Why Kernel Mode
-
-| Aspect | User-Mode API | Kernel Driver |
-|--------|---------------|---------------|
-| Privilege | Ring-3 | Ring-0 |
-| Detection | Easily intercepted | Undetectable in user-mode |
-| Access | Public API | Internal `tagWND` structures |
-| Bypasses Hooks | No | Yes |
-| Overhead | API call | Direct memory write |
+Tested on **Valorant** and **Call of Duty**.  
 
 ---
 
 ## How It Works
 
-The driver locates the target window's `tagWND` structure in kernel memory and modifies the `dwDisplayAffinity` field to the requested value (`WDA_MONITOR`, `WDA_EXCLUDEFROMCAPTURE`). The change is applied directly via the Window Manager, with no observable side effects in user-mode.
+By modifying the `dwDisplayAffinity` of a window in kernel mode, this tool prevents user-mode screen capture and screenshot attempts. Essentially, it operates at a higher privilege level than most anti-cheats.
 
 ---
 
-## Example Usage
+## How to Use
 
 ```cpp
 #include <iostream>
@@ -43,7 +23,7 @@ The driver locates the target window's `tagWND` structure in kernel memory and m
 int main() {
     HWND hwnd = FindWindowA(NULL, "Target Window");
 
-    NTSTATUS status = hide_window(hwnd, WDA_EXCLUDEFROMCAPTURE);
+    NTSTATUS status = protect_sprite_content_ex(hwnd, WDA_EXCLUDEFROMCAPTURE);
 
     if (status == 0)
         std::cout << "Success: Window hidden from screenshots\n";

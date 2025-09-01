@@ -1,6 +1,3 @@
-Got it. You have an extra opening backtick and the code block wasn’t closed properly. Here’s the fixed version with proper Markdown syntax:
-
-````markdown
 # Kernel Mode Window Affinity Controller
 
 A high-privilege Windows kernel driver for hiding windows from screenshots and screen capture. Operates entirely in kernel mode, bypassing user-mode API restrictions and hooks.
@@ -54,5 +51,3 @@ int main() {
 
     return 0;
 }
-````
-```

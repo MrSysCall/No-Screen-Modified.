@@ -1,3 +1,5 @@
+# Preview -> https://streamable.com/0ewfwu
+
 # No Screen - Kernel Mode Window Affinity Controller
 
 **No Screen** is a high-privilege kernel-mode tool designed for developers requiring secure window protection against screen capture. By leveraging a direct kernel-level modification of window display affinity, it ensures that target windows remain inaccessible to most user-mode screen capture and anti-cheat mechanisms.  
@@ -38,3 +40,7 @@ int main() {
 
     return 0;
 }
+
+
+
+

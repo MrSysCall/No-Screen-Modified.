@@ -1,8 +1,9 @@
 # Kernel Mode Window Affinity Controller
 
+# Planning On Releasing This Week.
+
 A high-privilege Windows kernel driver for hiding windows from screenshots and screen capture. Operates entirely in kernel mode, bypassing user-mode API restrictions and hooks.
 
-[License: MIT](LICENSE) | [Issues](https://github.com/YourUsername/KernelWindowAffinity/issues) | [Discussions](https://github.com/YourUsername/KernelWindowAffinity/discussions)
 
 ---
 
@@ -42,7 +43,7 @@ The driver locates the target window's `tagWND` structure in kernel memory and m
 int main() {
     HWND hwnd = FindWindowA(NULL, "Target Window");
 
-    NTSTATUS status = protect_sprite_content_ex(hwnd, WDA_EXCLUDEFROMCAPTURE);
+    NTSTATUS status = hide_window(hwnd, WDA_EXCLUDEFROMCAPTURE);
 
     if (status == 0)
         std::cout << "Success: Window hidden from screenshots\n";
